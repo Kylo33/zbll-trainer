@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from '@/components/ui/card';
 import { createFileRoute } from '@tanstack/react-router'
-import { puzzles } from 'cubing/puzzles';
-import { randomScrambleForEvent } from 'cubing/scramble';
-import { experimentalSolve3x3x3IgnoringCenters, random333Pattern } from 'cubing/search';
-import { Copy, Eye, RotateCcw, SkipForward, Star } from "lucide-react"
+// import { puzzles } from 'cubing/puzzles';
+// import { randomScrambleForEvent } from 'cubing/scramble';
+// import { experimentalSolve3x3x3IgnoringCenters } from 'cubing/search';
+import { Eye, SkipForward, Star } from "lucide-react"
 import "cubing/twisty";
 import { TwistyPlayer } from 'cubing/twisty';
 import { useEffect, useRef } from 'react';
-import { Table, TableCaption, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -34,21 +34,21 @@ function Index() {
     }
   }, [])
 
-  useEffect(() => {
-    (async () => {
-      const puzzle = await puzzles["3x3x3"].kpuzzle()
-      const scrambleAlg = (await randomScrambleForEvent("333")).concat("U R' F' M' x'");
-      const transformation = puzzle.algToTransformation(scrambleAlg);
+  // useEffect(() => {
+  //   (async () => {
+  //     const puzzle = await puzzles["3x3x3"].kpuzzle()
+  //     const scrambleAlg = (await randomScrambleForEvent("333")).concat("U R' F' M' x'");
+  //     const transformation = puzzle.algToTransformation(scrambleAlg);
 
 
-      const alg = await experimentalSolve3x3x3IgnoringCenters(
-        transformation.toKPattern()
-      );
+  //     const alg = await experimentalSolve3x3x3IgnoringCenters(
+  //       transformation.toKPattern()
+  //     );
 
-      console.log(`Scramble: ${scrambleAlg}`)
-      console.log(`Solution: ${alg.toString()}`);
-    })()
-  }, [])
+  //     console.log(`Scramble: ${scrambleAlg}`)
+  //     console.log(`Solution: ${alg.toString()}`);
+  //   })()
+  // }, [])
 
   return (
     <div className='mx-auto max-w-5xl m-4 flex flex-col gap-4'>
