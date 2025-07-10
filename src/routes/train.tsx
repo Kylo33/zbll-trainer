@@ -92,17 +92,17 @@ function Train() {
           </CardHeader>
           <CardContent className='flex flex-col gap-4'>
             <div className="bg-muted py-2 px-4 rounded-sm gap-x-2">
-              <div className="font-mono blur">F U R U' R2 F' R U R U' R' R U R U' R'</div>
+              <div className="font-mono">F U R U' R2 F' R U R U' R' R U R U' R'</div>
               <div className="text-xs text-muted-foreground mt-2 flex justify-between items-center">
-                <span className='blur'>11 HTM</span>
-                <Star size={16} />
+                <span className=''>11 HTM</span>
+                <Star size={16} className='text-yellow-300 fill-current' />
               </div>
             </div>
             <div className="bg-muted py-2 px-4 rounded-sm gap-x-2">
               <div className="font-mono">F U R U' R2 F' R U R U' R' R U R U' R'</div>
               <div className="text-xs text-muted-foreground mt-2 flex justify-between items-center">
                 <span className=''>11 HTM</span>
-                <Star size={16} className='text-yellow-300 fill-current' />
+                <Star size={16} />
               </div>
             </div>
             <div className="bg-muted py-2 px-4 rounded-sm gap-x-2">
