@@ -2,7 +2,7 @@ import Cube from "cubejs";
 import { Alg } from "cubing/alg";
 import fs, { cp } from "node:fs";
 
-const data = fs.readFileSync("algs/algs.txt", "utf8").split("\n");
+const data = fs.readFileSync("algs.txt", "utf8").split("\n");
 
 const algs = {};
 

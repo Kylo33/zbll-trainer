@@ -3,22 +3,31 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createFileRoute } from "@tanstack/react-router";
 import { MousePointerClick } from "lucide-react";
+import algorithms from "@/algs.json";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const zbllSets = ["T", "U", "L", "H", "Pi", "S", "AS"];
+type Algorithms = {
+  [cornerOrientation: string]: {
+    [cornerPermutation: string]: {
+      [edgePermutation: string]: string[];
+    };
+  };
+};
+
+const typedAlgorithms = algorithms as Algorithms;
 
 function Index() {
   return (
     <div>
-      <Tabs defaultValue={`zbll-${zbllSets[0].toLowerCase()}`}>
+      <Tabs defaultValue={Object.keys(typedAlgorithms)[0]}>
         <div className="flex justify-between items-center">
           <TabsList>
-            {zbllSets.map((set) => (
-              <TabsTrigger value={`zbll-${set.toLowerCase()}`} key={set}>
-                {set}
+            {Object.keys(typedAlgorithms).map((cornerOrientation) => (
+              <TabsTrigger value={cornerOrientation} key={cornerOrientation}>
+                {cornerOrientation}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -26,17 +35,23 @@ function Index() {
             <MousePointerClick /> Select All
           </Button>
         </div>
-        {zbllSets.map((set) => (
+        {Object.keys(typedAlgorithms).map((cornerOrientation) => (
           <TabsContent
-            value={`zbll-${set.toLowerCase()}`}
-            key={set}
+            value={cornerOrientation}
+            key={cornerOrientation}
             className="flex flex-col gap-4 mt-2"
           >
-            {[...Array(6).keys()]
-              .map((i) => i + 1)
-              .map((_i) => (
-                <AlgorithmSetCard key={_i} />
-              ))}
+            {Object.keys(typedAlgorithms[cornerOrientation]).map(
+              (cornerPermutation) => (
+                <AlgorithmSetCard
+                  key={cornerPermutation}
+                  algorithms={Object.values(
+                    typedAlgorithms[cornerOrientation][cornerPermutation]
+                  ).map((algGroup) => algGroup[0])}
+                  name={`${cornerOrientation} - ${cornerPermutation}`}
+                />
+              )
+            )}
           </TabsContent>
         ))}
       </Tabs>
