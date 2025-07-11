@@ -10,6 +10,7 @@ import { Alg } from "cubing/alg";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MousePointerClick } from "lucide-react";
+import FlatCube from "./flat-cube";
 
 interface AlgorithmSetCardProps {
   algorithms: string[];
@@ -61,11 +62,9 @@ export default function AlgorithmSetCard({
     if (showEdgePermutation) {
       twistyPlayer.experimentalStickeringMaskOrbits =
         "CORNERS:RRRRRRRR,EDGES:RRRR----RRRR,CENTERS:RRRRRR";
-      console.log("showing edges");
     } else {
       twistyPlayer.experimentalStickeringMaskOrbits =
         "CORNERS:RRRRRRRR,EDGES:RRRROOOORRRR,CENTERS:RRRRRR";
-      console.log("hiding edges");
     }
   }, [showEdgePermutation, currentAlgorithm]);
 
@@ -92,7 +91,12 @@ export default function AlgorithmSetCard({
                   setCurrentAlgorithm(algorithm);
                   setShowEdgePermutation(true);
                 }}
-              ></div>
+                onMouseLeave={() => {
+                  setShowEdgePermutation(false);
+                }}
+              >
+                <FlatCube algorithm={algorithm} />
+              </div>
             ))}
           </div>
         </div>
