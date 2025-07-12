@@ -11,9 +11,18 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MousePointerClick } from "lucide-react";
 import FlatCube from "./flat-cube";
+import clsx from "clsx";
+import { useAlgorithmStore } from "@/store/algorithmStore";
+
+type AlgSetup = {
+  algorithm: string;
+  cornerOrientation: string;
+  cornerPermutation: string;
+  edgePermutation: string;
+};
 
 interface AlgorithmSetCardProps {
-  algorithms: string[];
+  algorithms: AlgSetup[];
   name: string;
 }
 
@@ -24,10 +33,11 @@ export default function AlgorithmSetCard({
   const [twistyPlayer, setTwistyPlayer] = useState<TwistyPlayer | undefined>();
   const cubeDiv = useRef<HTMLDivElement | null>(null);
   const [currentAlgorithm, setCurrentAlgorithm] = useState<string>(
-    algorithms[0]
+    algorithms[0].algorithm
   );
   const [showEdgePermutation, setShowEdgePermutation] =
     useState<boolean>(false);
+  const selectedAlgorithms = useAlgorithmStore((state) => state.selectedAlgs);
 
   useEffect(() => {
     const twisty = new TwistyPlayer();
@@ -85,17 +95,24 @@ export default function AlgorithmSetCard({
           <div className="grid grid-cols-6 gap-2">
             {algorithms.map((algorithm) => (
               <div
-                className="h-28 w-28 border border-border rounded-lg"
-                key={algorithm}
+                className={clsx({
+                  "h-28 w-28 border border-border rounded-lg": true,
+                  "bg-emerald-500/20": selectedAlgorithms[
+                    algorithm.cornerOrientation
+                  ]?.[algorithm.cornerPermutation]?.has(
+                    algorithm.edgePermutation
+                  ),
+                })}
+                key={algorithm.algorithm}
                 onMouseEnter={() => {
-                  setCurrentAlgorithm(algorithm);
+                  setCurrentAlgorithm(algorithm.algorithm);
                   setShowEdgePermutation(true);
                 }}
                 onMouseLeave={() => {
                   setShowEdgePermutation(false);
                 }}
               >
-                <FlatCube algorithm={algorithm} />
+                <FlatCube algorithm={algorithm.algorithm} />
               </div>
             ))}
           </div>

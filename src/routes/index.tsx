@@ -2,9 +2,11 @@ import AlgorithmSetCard from "@/components/algorithm-set-card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createFileRoute } from "@tanstack/react-router";
-import { MousePointerClick } from "lucide-react";
+import { MousePointerClick, SquareX } from "lucide-react";
 import algorithms from "@/algs.json";
 import type { Algorithms } from "@/types/algorithms";
+import { useState } from "react";
+import { useAlgorithmStore } from "@/store/algorithmStore";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -51,9 +53,59 @@ const zbllSets = [
 ];
 
 function Index() {
+  const addAlg = useAlgorithmStore((state) => state.addAlg);
+  const removeAlg = useAlgorithmStore((state) => state.removeAlg);
+  const selectedAlgs = useAlgorithmStore((state) => state.selectedAlgs);
+
+  const [cornerOrientation, setCornerOrientation] = useState<string>(
+    zbllSets[0].cornerOrientation
+  );
+
+  let allAlgsSelected = true;
+  outer: for (const cornerPermutation of Object.keys(
+    typedAlgorithms[cornerOrientation]
+  )) {
+    for (const edgePermutation of Object.keys(
+      typedAlgorithms[cornerOrientation][cornerPermutation]
+    )) {
+      if (
+        !selectedAlgs[cornerOrientation]?.[cornerPermutation]?.has(
+          edgePermutation
+        )
+      ) {
+        allAlgsSelected = false;
+        break outer;
+      }
+    }
+  }
+
+  const selectAlgsFromCornerOrientation = (cornerOrientation: string) => {
+    Object.keys(typedAlgorithms[cornerOrientation]).forEach(
+      (cornerPermutation) => {
+        Object.keys(
+          typedAlgorithms[cornerOrientation][cornerPermutation]
+        ).forEach((edgePermutation) =>
+          addAlg(cornerOrientation, cornerPermutation, edgePermutation)
+        );
+      }
+    );
+  };
+
+  const deselectAlgsFromCornerOrientation = (cornerOrientation: string) => {
+    Object.keys(typedAlgorithms[cornerOrientation]).forEach(
+      (cornerPermutation) => {
+        Object.keys(
+          typedAlgorithms[cornerOrientation][cornerPermutation]
+        ).forEach((edgePermutation) =>
+          removeAlg(cornerOrientation, cornerPermutation, edgePermutation)
+        );
+      }
+    );
+  };
+
   return (
     <div>
-      <Tabs defaultValue={zbllSets[0].cornerOrientation}>
+      <Tabs value={cornerOrientation} onValueChange={setCornerOrientation}>
         <div className="flex justify-between items-center">
           <TabsList>
             {zbllSets.map((zbllSet) => (
@@ -65,8 +117,16 @@ function Index() {
               </TabsTrigger>
             ))}
           </TabsList>
-          <Button variant={"outline"}>
-            <MousePointerClick /> Select All
+          <Button
+            variant={"outline"}
+            onClick={() =>
+              allAlgsSelected
+                ? deselectAlgsFromCornerOrientation(cornerOrientation)
+                : selectAlgsFromCornerOrientation(cornerOrientation)
+            }
+          >
+            {allAlgsSelected ? <SquareX /> : <MousePointerClick />}{" "}
+            {allAlgsSelected ? "Deselect All" : "Select All"}
           </Button>
         </div>
         {zbllSets.map((zbllSet) => (
@@ -78,17 +138,19 @@ function Index() {
             {zbllSet.subsets.map((subsetCornerPermutation, index) => (
               <AlgorithmSetCard
                 key={subsetCornerPermutation}
-                algorithms={
+                algorithms={Object.keys(
                   typedAlgorithms[zbllSet.cornerOrientation][
                     subsetCornerPermutation
                   ]
-                    ? Object.values(
-                        typedAlgorithms[zbllSet.cornerOrientation][
-                          subsetCornerPermutation
-                        ]
-                      ).map((algArr) => algArr[0])
-                    : []
-                }
+                ).map((edgePermutation) => ({
+                  algorithm:
+                    typedAlgorithms[zbllSet.cornerOrientation][
+                      subsetCornerPermutation
+                    ][edgePermutation][0],
+                  cornerOrientation: zbllSet.cornerOrientation,
+                  cornerPermutation: subsetCornerPermutation,
+                  edgePermutation: edgePermutation,
+                }))}
                 name={`${zbllSet.name}-${index + 1}`}
               />
             ))}
