@@ -11,10 +11,10 @@ import { createFileRoute } from "@tanstack/react-router";
 // import { puzzles } from 'cubing/puzzles';
 // import { randomScrambleForEvent } from 'cubing/scramble';
 // import { experimentalSolve3x3x3IgnoringCenters } from 'cubing/search';
-import { Eye, SkipForward, Star } from "lucide-react";
+import { Eye, EyeOff, SkipForward, Star } from "lucide-react";
 import "cubing/twisty";
 import { TwistyPlayer } from "cubing/twisty";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -24,15 +24,21 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { useAlgorithmStore } from "@/store/algorithmStore";
+import clsx from "clsx";
 
 export const Route = createFileRoute("/train")({
   component: Train,
 });
 
 function Train() {
+  const [algsHidden, setAlgsHidden] = useState<boolean>(true);
   const cubeDiv = useRef<HTMLDivElement | null>(null);
   const randomCase = useAlgorithmStore((state) => state.randomCase);
   const nextRandomCase = useAlgorithmStore((state) => state.nextRandomCase);
+
+  useEffect(() => {
+    setAlgsHidden(true);
+  }, [randomCase]);
 
   useEffect(() => {
     const twisty = new TwistyPlayer();
@@ -92,12 +98,26 @@ function Train() {
             <CardTitle>View Algorithms</CardTitle>
             <CardDescription>See solutions for this case.</CardDescription>
             <CardAction>
-              <Button size={"icon"} variant={"outline"}>
-                <Eye />
+              <Button
+                size={"icon"}
+                variant={"outline"}
+                onClick={() => setAlgsHidden(!algsHidden)}
+              >
+                {!algsHidden ? <Eye /> : <EyeOff />}
               </Button>
             </CardAction>
           </CardHeader>
-          <CardContent className="flex flex-col gap-4">
+          <CardContent
+            className={clsx({
+              "flex flex-col gap-4 transition-all duration-150 h-full": true,
+              "blur cursor-pointer select-none": algsHidden,
+            })}
+            onClick={() => {
+              if (algsHidden) {
+                setAlgsHidden(false);
+              }
+            }}
+          >
             {randomCase.algorithms.map((algorithm) => (
               <div className="bg-muted py-2 px-4 rounded-sm gap-x-2">
                 <div className="font-mono">{algorithm}</div>
