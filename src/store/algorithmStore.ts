@@ -19,6 +19,11 @@ type AlgStore = {
     cornerPermutation: string,
     edgePermutation: string
   ) => void;
+  toggleAlg: (
+    cornerOrientation: string,
+    cornerPermutation: string,
+    edgePermutation: string
+  ) => void;
 };
 
 export const useAlgorithmStore = create<AlgStore>()(
@@ -67,6 +72,28 @@ export const useAlgorithmStore = create<AlgStore>()(
                 [cornerPermutation]: existingCp.filter(
                   (ep) => ep != edgePermutation
                 ),
+              },
+            },
+          };
+        });
+      },
+      toggleAlg: (
+        cornerOrientation: string,
+        cornerPermutation: string,
+        edgePermutation: string
+      ) => {
+        return set((state) => {
+          const existingCo = state.selectedAlgs[cornerOrientation] ?? {};
+          const existingCp = existingCo[cornerPermutation] ?? [];
+
+          return {
+            selectedAlgs: {
+              ...state.selectedAlgs,
+              [cornerOrientation]: {
+                ...existingCo,
+                [cornerPermutation]: existingCp.includes(edgePermutation)
+                  ? existingCp.filter((ep) => ep != edgePermutation)
+                  : [...existingCp, edgePermutation],
               },
             },
           };

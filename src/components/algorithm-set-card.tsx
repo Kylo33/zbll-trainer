@@ -9,7 +9,7 @@ import { TwistyPlayer } from "cubing/twisty";
 import { Alg } from "cubing/alg";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MousePointerClick } from "lucide-react";
+import { MousePointerClick, SquareX } from "lucide-react";
 import FlatCube from "./flat-cube";
 import clsx from "clsx";
 import { useAlgorithmStore } from "@/store/algorithmStore";
@@ -38,6 +38,15 @@ export default function AlgorithmSetCard({
   const [showEdgePermutation, setShowEdgePermutation] =
     useState<boolean>(false);
   const selectedAlgorithms = useAlgorithmStore((state) => state.selectedAlgs);
+  const addAlg = useAlgorithmStore((state) => state.addAlg);
+  const removeAlg = useAlgorithmStore((state) => state.removeAlg);
+  const toggleAlg = useAlgorithmStore((state) => state.toggleAlg);
+
+  let allAlgsSelected = algorithms.every((algorithm) =>
+    selectedAlgorithms[algorithm.cornerOrientation]?.[
+      algorithm.cornerPermutation
+    ]?.includes(algorithm.edgePermutation)
+  );
 
   useEffect(() => {
     const twisty = new TwistyPlayer();
@@ -83,9 +92,28 @@ export default function AlgorithmSetCard({
       <CardHeader>
         <CardTitle>{name}</CardTitle>
         <CardAction>
-          <Button variant={"outline"}>
-            <MousePointerClick />
-            Select All
+          <Button
+            variant={"outline"}
+            onClick={() =>
+              allAlgsSelected
+                ? algorithms.forEach((algorithm) =>
+                    removeAlg(
+                      algorithm.cornerOrientation,
+                      algorithm.cornerPermutation,
+                      algorithm.edgePermutation
+                    )
+                  )
+                : algorithms.forEach((algorithm) =>
+                    addAlg(
+                      algorithm.cornerOrientation,
+                      algorithm.cornerPermutation,
+                      algorithm.edgePermutation
+                    )
+                  )
+            }
+          >
+            {allAlgsSelected ? <SquareX /> : <MousePointerClick />}{" "}
+            {allAlgsSelected ? "Deselect All" : "Select All"}
           </Button>
         </CardAction>
       </CardHeader>
@@ -98,7 +126,7 @@ export default function AlgorithmSetCard({
                 className={clsx({
                   "h-28 w-28 border border-border rounded-lg transition-all duration-200":
                     true,
-                  "bg-emerald-500/20": selectedAlgorithms[
+                  "bg-emerald-500/50": selectedAlgorithms[
                     algorithm.cornerOrientation
                   ]?.[algorithm.cornerPermutation]?.find(
                     (ep) => ep == algorithm.edgePermutation
@@ -111,6 +139,13 @@ export default function AlgorithmSetCard({
                 }}
                 onMouseLeave={() => {
                   setShowEdgePermutation(false);
+                }}
+                onClick={() => {
+                  toggleAlg(
+                    algorithm.cornerOrientation,
+                    algorithm.cornerPermutation,
+                    algorithm.edgePermutation
+                  );
                 }}
               >
                 <FlatCube algorithm={algorithm.algorithm} />
