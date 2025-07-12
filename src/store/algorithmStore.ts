@@ -11,6 +11,14 @@ type AlgStoreData = {
   };
 };
 
+type FavoriteAlgorithmsData = {
+  [cornerOrientation: string]: {
+    [cornerPermutation: string]: {
+      [edgePermutation: string]: string[];
+    };
+  };
+};
+
 type AlgStore = {
   randomCase: AlgCase;
   nextRandomCase: () => void;
@@ -29,6 +37,13 @@ type AlgStore = {
     cornerOrientation: string,
     cornerPermutation: string,
     edgePermutation: string
+  ) => void;
+  favoriteAlgorithms: FavoriteAlgorithmsData;
+  toggleFavoriteAlgorithm: (
+    cornerOrientation: string,
+    cornerPermutation: string,
+    edgePermutation: string,
+    algorithm: string
   ) => void;
 };
 
@@ -163,6 +178,33 @@ export const useAlgorithmStore = create<AlgStore>()(
           };
         });
       },
+      favoriteAlgorithms: {},
+      toggleFavoriteAlgorithm: (
+        cornerOrientation: string,
+        cornerPermutation: string,
+        edgePermutation: string,
+        algorithm: string
+      ) =>
+        set((state) => {
+          const existingCo = state.favoriteAlgorithms[cornerOrientation] ?? {};
+          const existingCp = existingCo[cornerPermutation] ?? [];
+          const existingEp = existingCp[edgePermutation] ?? [];
+
+          return {
+            favoriteAlgorithms: {
+              ...state.favoriteAlgorithms,
+              [cornerOrientation]: {
+                ...existingCo,
+                [cornerPermutation]: {
+                  ...existingCp,
+                  [edgePermutation]: existingEp.includes(algorithm)
+                    ? existingEp.filter((alg) => alg != algorithm)
+                    : [...existingEp, algorithm],
+                },
+              },
+            },
+          };
+        }),
     }),
     {
       name: "selected-algorithm-storage",

@@ -35,6 +35,12 @@ function Train() {
   const cubeDiv = useRef<HTMLDivElement | null>(null);
   const randomCase = useAlgorithmStore((state) => state.randomCase);
   const nextRandomCase = useAlgorithmStore((state) => state.nextRandomCase);
+  const favoriteAlgorithms = useAlgorithmStore(
+    (state) => state.favoriteAlgorithms
+  );
+  const toggleFavoriteAlgorithm = useAlgorithmStore(
+    (state) => state.toggleFavoriteAlgorithm
+  );
 
   useEffect(() => {
     setAlgsHidden(true);
@@ -123,7 +129,24 @@ function Train() {
                 <div className="font-mono">{algorithm}</div>
                 <div className="text-xs text-muted-foreground mt-2 flex justify-between items-center">
                   <span className="">11 HTM</span>
-                  <Star size={16} className="text-yellow-300 fill-current" />
+                  <Star
+                    size={16}
+                    className={clsx({
+                      "cursor-pointer": true,
+                      "text-yellow-400 fill-current":
+                        favoriteAlgorithms[randomCase.cornerOrientation]?.[
+                          randomCase.cornerPermutation
+                        ]?.[randomCase.edgePermutation]?.includes(algorithm),
+                    })}
+                    onClick={() =>
+                      toggleFavoriteAlgorithm(
+                        randomCase.cornerOrientation,
+                        randomCase.cornerPermutation,
+                        randomCase.edgePermutation,
+                        algorithm
+                      )
+                    }
+                  />
                 </div>
               </div>
             ))}
