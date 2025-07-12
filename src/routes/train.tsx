@@ -23,6 +23,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import { useAlgorithmStore } from "@/store/algorithmStore";
 
 export const Route = createFileRoute("/train")({
   component: Train,
@@ -30,6 +31,8 @@ export const Route = createFileRoute("/train")({
 
 function Train() {
   const cubeDiv = useRef<HTMLDivElement | null>(null);
+  const randomCase = useAlgorithmStore((state) => state.randomCase);
+  const nextRandomCase = useAlgorithmStore((state) => state.nextRandomCase);
 
   useEffect(() => {
     const twisty = new TwistyPlayer();
@@ -48,21 +51,6 @@ function Train() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const puzzle = await puzzles["3x3x3"].kpuzzle()
-  //     const scrambleAlg = (await randomScrambleForEvent("333")).concat("U R' F' M' x'");
-  //     const transformation = puzzle.algToTransformation(scrambleAlg);
-
-  //     const alg = await experimentalSolve3x3x3IgnoringCenters(
-  //       transformation.toKPattern()
-  //     );
-
-  //     console.log(`Scramble: ${scrambleAlg}`)
-  //     console.log(`Solution: ${alg.toString()}`);
-  //   })()
-  // }, [])
-
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-3 gap-4">
@@ -74,7 +62,7 @@ function Train() {
                 Scramble the cube from its current position to start solving.
               </CardDescription>
               <CardAction>
-                <Button variant={"outline"}>
+                <Button variant={"outline"} onClick={nextRandomCase}>
                   <SkipForward />
                   Skip
                 </Button>
@@ -110,33 +98,15 @@ function Train() {
             </CardAction>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <div className="bg-muted py-2 px-4 rounded-sm gap-x-2">
-              <div className="font-mono">
-                F U R U' R2 F' R U R U' R' R U R U' R'
+            {randomCase.algorithms.map((algorithm) => (
+              <div className="bg-muted py-2 px-4 rounded-sm gap-x-2">
+                <div className="font-mono">{algorithm}</div>
+                <div className="text-xs text-muted-foreground mt-2 flex justify-between items-center">
+                  <span className="">11 HTM</span>
+                  <Star size={16} className="text-yellow-300 fill-current" />
+                </div>
               </div>
-              <div className="text-xs text-muted-foreground mt-2 flex justify-between items-center">
-                <span className="">11 HTM</span>
-                <Star size={16} className="text-yellow-300 fill-current" />
-              </div>
-            </div>
-            <div className="bg-muted py-2 px-4 rounded-sm gap-x-2">
-              <div className="font-mono">
-                F U R U' R2 F' R U R U' R' R U R U' R'
-              </div>
-              <div className="text-xs text-muted-foreground mt-2 flex justify-between items-center">
-                <span className="">11 HTM</span>
-                <Star size={16} />
-              </div>
-            </div>
-            <div className="bg-muted py-2 px-4 rounded-sm gap-x-2">
-              <div className="font-mono">
-                F U R U' R2 F' R U R U' R' R U R U' R'
-              </div>
-              <div className="text-xs text-muted-foreground mt-2 flex justify-between items-center">
-                <span className="">11 HTM</span>
-                <Star size={16} />
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
       </div>

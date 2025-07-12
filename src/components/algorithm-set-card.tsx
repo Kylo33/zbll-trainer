@@ -13,16 +13,10 @@ import { MousePointerClick, SquareX } from "lucide-react";
 import FlatCube from "./flat-cube";
 import clsx from "clsx";
 import { useAlgorithmStore } from "@/store/algorithmStore";
-
-type AlgSetup = {
-  algorithm: string;
-  cornerOrientation: string;
-  cornerPermutation: string;
-  edgePermutation: string;
-};
+import type { AlgCase } from "@/types/algorithms";
 
 interface AlgorithmSetCardProps {
-  algorithms: AlgSetup[];
+  algorithms: AlgCase[];
   name: string;
 }
 
@@ -33,14 +27,14 @@ export default function AlgorithmSetCard({
   const [twistyPlayer, setTwistyPlayer] = useState<TwistyPlayer | undefined>();
   const cubeDiv = useRef<HTMLDivElement | null>(null);
   const [currentAlgorithm, setCurrentAlgorithm] = useState<string>(
-    algorithms[0].algorithm
+    algorithms[0].algorithms[0]
   );
   const [showEdgePermutation, setShowEdgePermutation] =
     useState<boolean>(false);
-  const selectedAlgorithms = useAlgorithmStore((state) => state.selectedAlgs);
-  const addAlg = useAlgorithmStore((state) => state.addAlg);
-  const removeAlg = useAlgorithmStore((state) => state.removeAlg);
-  const toggleAlg = useAlgorithmStore((state) => state.toggleAlg);
+  const selectedAlgorithms = useAlgorithmStore((state) => state.selectedCases);
+  const addAlg = useAlgorithmStore((state) => state.addCase);
+  const removeAlg = useAlgorithmStore((state) => state.removeCase);
+  const toggleAlg = useAlgorithmStore((state) => state.toggleCase);
 
   let allAlgsSelected = algorithms.every((algorithm) =>
     selectedAlgorithms[algorithm.cornerOrientation]?.[
@@ -124,7 +118,7 @@ export default function AlgorithmSetCard({
             {algorithms.map((algorithm) => (
               <div
                 className={clsx({
-                  "h-28 w-28 border border-border rounded-lg transition-all duration-200":
+                  "h-28 w-28 border border-border rounded-lg transition-all duration-200 cursor-pointer":
                     true,
                   "bg-emerald-500/50": selectedAlgorithms[
                     algorithm.cornerOrientation
@@ -132,9 +126,9 @@ export default function AlgorithmSetCard({
                     (ep) => ep == algorithm.edgePermutation
                   ),
                 })}
-                key={algorithm.algorithm}
+                key={algorithm.algorithms[0]}
                 onMouseEnter={() => {
-                  setCurrentAlgorithm(algorithm.algorithm);
+                  setCurrentAlgorithm(algorithm.algorithms[0]);
                   setShowEdgePermutation(true);
                 }}
                 onMouseLeave={() => {
@@ -148,7 +142,7 @@ export default function AlgorithmSetCard({
                   );
                 }}
               >
-                <FlatCube algorithm={algorithm.algorithm} />
+                <FlatCube algorithm={algorithm.algorithms[0]} />
               </div>
             ))}
           </div>

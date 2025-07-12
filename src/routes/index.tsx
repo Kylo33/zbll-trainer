@@ -17,12 +17,12 @@ const typedAlgorithms = algorithms as Algorithms;
 const zbllSets = [
   {
     name: "T",
-    cornerOrientation: "0021",
+    cornerOrientation: "0012",
     subsets: ["123", "321", "213", "312", "231", "132"],
   },
   {
     name: "U",
-    cornerOrientation: "0012",
+    cornerOrientation: "0021",
     subsets: ["123", "321", "132", "231", "213", "312"],
   },
   {
@@ -53,9 +53,9 @@ const zbllSets = [
 ];
 
 function Index() {
-  const addAlg = useAlgorithmStore((state) => state.addAlg);
-  const removeAlg = useAlgorithmStore((state) => state.removeAlg);
-  const selectedAlgs = useAlgorithmStore((state) => state.selectedAlgs);
+  const addAlg = useAlgorithmStore((state) => state.addCase);
+  const removeAlg = useAlgorithmStore((state) => state.removeCase);
+  const selectedAlgs = useAlgorithmStore((state) => state.selectedCases);
 
   const [cornerOrientation, setCornerOrientation] = useState<string>(
     zbllSets[0].cornerOrientation
@@ -143,10 +143,10 @@ function Index() {
                     subsetCornerPermutation
                   ]
                 ).map((edgePermutation) => ({
-                  algorithm:
+                  algorithms:
                     typedAlgorithms[zbllSet.cornerOrientation][
                       subsetCornerPermutation
-                    ][edgePermutation][0],
+                    ][edgePermutation],
                   cornerOrientation: zbllSet.cornerOrientation,
                   cornerPermutation: subsetCornerPermutation,
                   edgePermutation: edgePermutation,
