@@ -112,13 +112,13 @@ export default function AlgorithmSetCard({
         </CardAction>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between">
-          <div ref={cubeDiv} className="w-48"></div>
-          <div className="grid grid-cols-6 gap-2">
+        <div className="flex flex-col lg:flex-row justify-between gap-4">
+          <div ref={cubeDiv} className="w-48 h-48 self-center"></div>
+          <div className="grid grid-cols-2 lg:grid-cols-6 gap-2 place-items-center">
             {algorithms.map((algorithm) => (
               <div
                 className={clsx({
-                  "h-28 w-28 border border-border rounded-lg transition-all duration-200 cursor-pointer":
+                  "w-full aspect-square lg:w-28 lg:h-28 border border-border rounded-lg transition-all duration-200 cursor-pointer":
                     true,
                   "bg-emerald-500/50": selectedAlgorithms[
                     algorithm.cornerOrientation
