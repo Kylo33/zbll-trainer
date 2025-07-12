@@ -69,8 +69,8 @@ function Index() {
       typedAlgorithms[cornerOrientation][cornerPermutation]
     )) {
       if (
-        !selectedAlgs[cornerOrientation]?.[cornerPermutation]?.has(
-          edgePermutation
+        !selectedAlgs[cornerOrientation]?.[cornerPermutation]?.find(
+          (e) => e == edgePermutation
         )
       ) {
         allAlgsSelected = false;

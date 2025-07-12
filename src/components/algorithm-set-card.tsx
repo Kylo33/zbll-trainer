@@ -96,11 +96,12 @@ export default function AlgorithmSetCard({
             {algorithms.map((algorithm) => (
               <div
                 className={clsx({
-                  "h-28 w-28 border border-border rounded-lg": true,
+                  "h-28 w-28 border border-border rounded-lg transition-all duration-200":
+                    true,
                   "bg-emerald-500/20": selectedAlgorithms[
                     algorithm.cornerOrientation
-                  ]?.[algorithm.cornerPermutation]?.has(
-                    algorithm.edgePermutation
+                  ]?.[algorithm.cornerPermutation]?.find(
+                    (ep) => ep == algorithm.edgePermutation
                   ),
                 })}
                 key={algorithm.algorithm}

@@ -1,8 +1,9 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type AlgStoreData = {
   [cornerOrientation: string]: {
-    [cornerPermutation: string]: Set<string>;
+    [cornerPermutation: string]: string[];
   };
 };
 
@@ -20,51 +21,60 @@ type AlgStore = {
   ) => void;
 };
 
-export const useAlgorithmStore = create<AlgStore>((set) => ({
-  selectedAlgs: {},
-  addAlg: (
-    cornerOrientation: string,
-    cornerPermutation: string,
-    edgePermutation: string
-  ) => {
-    return set((state) => {
-      const existingCo = state.selectedAlgs[cornerOrientation] ?? {};
-      const existingCp = existingCo[cornerPermutation] ?? new Set<string>();
-      return {
-        selectedAlgs: {
-          ...state.selectedAlgs,
-          [cornerOrientation]: {
-            ...existingCo,
-            [cornerPermutation]: new Set(existingCp).add(edgePermutation),
-          },
-        },
-      };
-    });
-  },
-  removeAlg: (
-    cornerOrientation: string,
-    cornerPermutation: string,
-    edgePermutation: string
-  ) => {
-    return set((state) => {
-      const existingCo = state.selectedAlgs[cornerOrientation];
-      if (!existingCo) return state;
+export const useAlgorithmStore = create<AlgStore>()(
+  persist(
+    (set) => ({
+      selectedAlgs: {},
+      addAlg: (
+        cornerOrientation: string,
+        cornerPermutation: string,
+        edgePermutation: string
+      ) => {
+        return set((state) => {
+          const existingCo = state.selectedAlgs[cornerOrientation] ?? {};
+          const existingCp = existingCo[cornerPermutation] ?? [];
 
-      const existingCp = existingCo[cornerPermutation];
-      if (!existingCp) return state;
+          if (existingCp.find((s) => s == edgePermutation)) return state;
 
-      const newSet = new Set(existingCp);
-      newSet.delete(edgePermutation);
+          return {
+            selectedAlgs: {
+              ...state.selectedAlgs,
+              [cornerOrientation]: {
+                ...existingCo,
+                [cornerPermutation]: [...existingCp, edgePermutation],
+              },
+            },
+          };
+        });
+      },
+      removeAlg: (
+        cornerOrientation: string,
+        cornerPermutation: string,
+        edgePermutation: string
+      ) => {
+        return set((state) => {
+          const existingCo = state.selectedAlgs[cornerOrientation];
+          if (!existingCo) return state;
 
-      return {
-        selectedAlgs: {
-          ...state.selectedAlgs,
-          [cornerOrientation]: {
-            ...existingCo,
-            [cornerPermutation]: newSet,
-          },
-        },
-      };
-    });
-  },
-}));
+          const existingCp = existingCo[cornerPermutation];
+          if (!existingCp) return state;
+
+          return {
+            selectedAlgs: {
+              ...state.selectedAlgs,
+              [cornerOrientation]: {
+                ...existingCo,
+                [cornerPermutation]: existingCp.filter(
+                  (ep) => ep != edgePermutation
+                ),
+              },
+            },
+          };
+        });
+      },
+    }),
+    {
+      name: "selected-algorithm-storage",
+    }
+  )
+);
